@@ -1,0 +1,23 @@
+FROM nginx:alpine
+
+#RUN adduser -D -g 'nginx' nginx
+ARG PACKAGES="vim openssl-dev bash mc"
+
+RUN apk update \
+    && apk upgrade \
+    && apk add --update --no-cache $PACKAGES
+
+
+COPY nginx.conf /etc/nginx/nginx.conf
+
+RUN chown -R nginx:nginx /etc/nginx/
+
+RUN chown -R nginx:nginx /var/cache/nginx/
+
+RUN chown -R nginx:nginx /var/log/nginx/
+
+RUN chown -R nginx:nginx /tmp/
+
+USER nginx
+
+CMD ["nginx", "-g", "daemon off;"]

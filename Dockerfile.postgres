@@ -1,0 +1,9 @@
+FROM postgres:alpine
+
+#RUN adduser -D -g 'postgres' postgres
+
+COPY postgres.conf /etc/postgresql/postgres.conf
+
+RUN chown -R postgres:postgres /etc/postgresql/
+
+USER postgres

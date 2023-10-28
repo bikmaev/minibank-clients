@@ -1,0 +1,50 @@
+# .rubocop.yml
+require:
+  - rubocop-rails
+  - rubocop-rspec
+
+AllCops:
+  Exclude:
+    - 'db/**/*'
+    - 'data/**/*'
+    - 'config/**/*'
+
+Style/StringLiterals:
+  Enabled: false
+
+Layout/IndentationWidth:
+  Width: 2
+
+Layout/LineLength:
+  Max: 120
+
+Layout/SpaceAroundOperators:
+  EnforcedStyle: require_spaces_in_assignment
+  SpaceAroundOperators:
+    - op: '='
+    - op: '+'
+    - op: '-'
+    - op: '*'
+    - op: '/'
+    - op: '%'
+    - op: '**'
+    - op: '|'
+    - op: '&'
+    - op: '^'
+    - op: '<'
+    - op: '>'
+    - op: '=='
+    - op: '==='
+    - op: '!='
+    - op: '<=>'
+    - op: '&&'
+    - op: '||'
+
+Naming/MethodName:
+  AllowedRegex: '\?$'
+
+Metrics/BlockNesting:
+  Max: 5
+
+Metrics/MethodLength:
+  Max: 10
