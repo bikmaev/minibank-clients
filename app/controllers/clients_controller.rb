@@ -17,53 +17,20 @@ class ClientsController < ApplicationController
     Rails.logger.info("Клиент парамс для сохранения: #{client_params}")
     Rails.logger.info("пароль для сохранения: #{params[:password]}")
     @client = Client.new(client_params)
-    #@client = Client.new(client_params.merge(password: params[:password]))
     Rails.logger.info("создан объект клиент: #{@client.inspect}")
-    @client.password = params[:password]
+    @client.password = params[:password] if params[:password].present?
     Rails.logger.info("Клиент для сохранения: #{@client.inspect}")
     if @client.save
       render json: @client, status: :created, location: @client
     else
-      #render json: @client.errors, status: :unprocessable_entity
-      #Rails.logger.error(@client.errors.full_messages) # вывод ошибок в лог
       Rails.logger.error("Клиент после сохранения: #{@client.inspect}")
       render json: { error: @client.errors.full_messages.join(', ') }, status: :unprocessable_entity
     end
   end
 
-  #def create
-    #begin
-    #@client = Client.new(client_params[:client])
-    #Rails.logger.info("параметры для сохранения клиента: #{client_params}")
-    #if @client.save
-    #  render json: @client, status: :created, location: @client
-    #else
-    #  render json: @client.errors, status: :unprocessable_entity
-    #end
-    #rescue StandardError => e
-    #Rails.logger.error("Ошибка при создании клиента: #{e.message}")
-    #Rails.logger.error(e.backtrace.join("\n"))
-    #render json: { error: 'Ошибка при создании клиента.' }, status: :internal_server_error
-    #end
-    #begin
-    #  @client = Client.new(client_params)
-    #  Rails.logger.info("параметры для сохранения клиента: #{client_params}")
-    #  if @client.save
-    #    render json: @client, status: :created, location: @client
-    #  else
-    #    Rails.logger.error(@client.errors.full_messages) # вывод ошибок в лог
-    #    render json: @client.errors, status: :unprocessable_entity
-    #  end
-    #rescue StandardError => e
-    #  Rails.logger.error("Ошибка при создании клиента: #{e.message}")
-    #  Rails.logger.error(e.backtrace.join("\n"))
-    #  render json: { error: 'Ошибка при создании клиента.' }, status: :internal_server_error
-    #end
-  #end
-
   # PATCH/PUT /clients/1
   def update
-    if @client.update(client_params)
+    if unique_attributes?(client_params) && @client.update(client_params)
       render json: @client
     else
       render json: @client.errors, status: :unprocessable_entity
@@ -81,12 +48,27 @@ class ClientsController < ApplicationController
     @client = Client.find(params[:id])
   end
 
-  #def client_params
-  #  params.require(:client).permit(:full_name, :login, :email, :password, :password_confirmation)
-  #  Rails.logger.info("client_params cheq requirements: #{params}")
-  #end
-
   def client_params
     params.require(:client).permit(:full_name, :login, :email, :password)
   end
+
+  def unique_attributes?(params)
+    Rails.logger.info("параметры проверки уникальности : #{params}")
+    Rails.logger.info("параметры проверки уникальности : #{@client.inspect}")
+    if params[:login].present? && params[:login] != @client.login
+      login_unique = Client.where.not(id: @client.id).where(login: params[:login]).empty?
+    else
+      login_unique = true
+    end
+
+    if params[:email].present? && params[:email] != @client.email
+      email_unique = Client.where.not(id: @client.id).where(email: params[:email]).empty?
+    else
+      email_unique = true
+    end
+
+    login_unique && email_unique
+  end
+
+
 end
