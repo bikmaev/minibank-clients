@@ -1,0 +1,5 @@
+#one:
+#  full_name: "Петров Иван Васильевич"
+#  login: "petrov"
+#  email: "petr@host.com"
+#  password_digest: <%= BCrypt::Password.create('password') %>

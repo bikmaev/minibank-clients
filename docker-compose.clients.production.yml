@@ -1,0 +1,64 @@
+version: '3.8'
+
+services:
+  clients_blue:
+    image: minibank_clients_p
+    build:
+      context: .
+      dockerfile: Dockerfile.clients.production
+    ports:
+      - "3002:3000"
+    env_file:
+      - .env.test
+    depends_on:
+      - postgres_clients
+    networks:
+      - mynetwork
+
+  clients_green:
+    image: minibank_clients_p
+    build:
+      context: .
+      dockerfile: Dockerfile.clients.production
+    ports:
+      - "3003:3000"
+    env_file:
+      - .env.test
+    networks:
+      - mynetwork
+    depends_on:
+      - postgres_clients
+
+  postgres_clients:
+    image: minibank_postgres_clients
+    build:
+      context: .
+      dockerfile: Dockerfile.postgres
+    env_file:
+      - .env.test
+    ports:
+      - "5433:5432"
+    volumes:
+      - ./data:/var/lib/postgresql/data
+    networks:
+      - mynetwork
+
+
+  nginx:
+    image: minibank_nginx_clients
+    build:
+      context: .
+      dockerfile: Dockerfile.nginx
+    ports:
+      - "8081:80"
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf
+    depends_on:
+      - clients_blue
+      - clients_green
+    networks:
+      - mynetwork
+
+
+networks:
+  mynetwork:
