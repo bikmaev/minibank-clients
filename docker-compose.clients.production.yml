@@ -9,7 +9,7 @@ services:
     ports:
       - "3002:3000"
     env_file:
-      - .env.test
+      - .env.p
     depends_on:
       - postgres_clients
     networks:
@@ -23,7 +23,7 @@ services:
     ports:
       - "3003:3000"
     env_file:
-      - .env.test
+      - .env.p
     networks:
       - mynetwork
     depends_on:
@@ -35,7 +35,7 @@ services:
       context: .
       dockerfile: Dockerfile.postgres
     env_file:
-      - .env.test
+      - .env.p
     ports:
       - "5433:5432"
     volumes:

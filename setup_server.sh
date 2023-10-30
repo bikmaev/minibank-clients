@@ -26,13 +26,18 @@ curl -fsSL https://get.docker.com -o get-docker.sh
 sudo sh get-docker.sh
 sudo usermod -aG docker $USERNAME
 newgrp docker
-sudo apt install -y docker-compose
+#sudo apt install -y docker-compose
+sudo curl -L "https://github.com/docker/compose/releases/download/v2.10.2/docker-compose-$(uname -s)-$(uname -m)" -o /usr/bin/docker-compose
+sudo chmod +x /usr/bin/docker-compose
 sudo apt install -y bundler
 
 git clone https://bikmaev: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@github.com/bikmaev/minibank-clients.git
 cd /home/$USERNAME/minibank-clients
+echo "POSTGRES_USER=docker\nPOSTGRES_PASSWORD=docker\nPOSTGRES_DB=docker\nRAILS_ENV=production\nPOSTGRES_PORT=5432" > .env.p
 docker build -t minibank_nginx_clients  -f Dockerfile.nginx .
 docker build -t minibank_postgres_clients  -f Dockerfile.postgres .
 docker build -t minibank_clients_p  -f Dockerfile.clients.production .
+
+
 
 
