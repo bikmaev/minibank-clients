@@ -8,6 +8,7 @@ AllCops:
     - 'db/**/*'
     - 'data/**/*'
     - 'config/**/*'
+    - 'bin/**/*'
 
 Style/StringLiterals:
   Enabled: false
@@ -16,7 +17,7 @@ Layout/IndentationWidth:
   Width: 2
 
 Layout/LineLength:
-  Max: 120
+  Max: 150
 
 Layout/SpaceAroundOperators:
   EnforcedStyle: require_spaces_in_assignment
@@ -47,4 +48,10 @@ Metrics/BlockNesting:
   Max: 5
 
 Metrics/MethodLength:
-  Max: 10
+  Max: 15
+
+Metrics/AbcSize:
+  Max: 25
+
+RSpec/MultipleExpectations:
+  Max: 2

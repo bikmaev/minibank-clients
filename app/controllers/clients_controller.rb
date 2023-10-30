@@ -1,5 +1,8 @@
+# frozen_string_literal: true
+
+# ClientsController - отвечает за CRUD методы client
 class ClientsController < ApplicationController
-  before_action :set_client, only: [:show, :update, :destroy]
+  before_action :set_client, only: %i[show update destroy]
 
   # GET /clients
   def index
@@ -14,16 +17,16 @@ class ClientsController < ApplicationController
 
   # POST /clients
   def create
-    Rails.logger.info("Клиент парамс для сохранения: #{client_params}")
-    Rails.logger.info("пароль для сохранения: #{params[:password]}")
+    # Rails.logger.info("Клиент парамс для сохранения: #{client_params}")
+    # Rails.logger.info("пароль для сохранения: #{params[:password]}")
     @client = Client.new(client_params)
-    Rails.logger.info("создан объект клиент: #{@client.inspect}")
+    # Rails.logger.info("создан объект клиент: #{@client.inspect}")
     @client.password = params[:password] if params[:password].present?
-    Rails.logger.info("Клиент для сохранения: #{@client.inspect}")
+    # Rails.logger.info("Клиент для сохранения: #{@client.inspect}")
     if @client.save
       render json: @client, status: :created, location: @client
     else
-      Rails.logger.error("Клиент после сохранения: #{@client.inspect}")
+      # Rails.logger.error("Клиент после сохранения: #{@client.inspect}")
       render json: { error: @client.errors.full_messages.join(', ') }, status: :unprocessable_entity
     end
   end
@@ -44,6 +47,7 @@ class ClientsController < ApplicationController
   end
 
   private
+
   def set_client
     @client = Client.find(params[:id])
   end
@@ -53,22 +57,20 @@ class ClientsController < ApplicationController
   end
 
   def unique_attributes?(params)
-    Rails.logger.info("параметры проверки уникальности : #{params}")
-    Rails.logger.info("параметры проверки уникальности : #{@client.inspect}")
-    if params[:login].present? && params[:login] != @client.login
-      login_unique = Client.where.not(id: @client.id).where(login: params[:login]).empty?
-    else
-      login_unique = true
-    end
+    # Rails.logger.info("параметры проверки уникальности : #{params}")
+    # Rails.logger.info("параметры проверки уникальности : #{@client.inspect}")
+    login_unique = if params[:login].present? && params[:login] != @client.login
+                     Client.where.not(id: @client.id).where(login: params[:login]).empty?
+                   else
+                     true
+                   end
 
-    if params[:email].present? && params[:email] != @client.email
-      email_unique = Client.where.not(id: @client.id).where(email: params[:email]).empty?
-    else
-      email_unique = true
-    end
+    email_unique = if params[:email].present? && params[:email] != @client.email
+                     Client.where.not(id: @client.id).where(email: params[:email]).empty?
+                   else
+                     true
+                   end
 
     login_unique && email_unique
   end
-
-
 end
