@@ -24,9 +24,9 @@ jobs:
           username: ${{ secrets.SERVER_USER }}
           key: ${{ secrets.SERVER_SSH_KEY }}
           script: |
-            pwd
-            ls
-            ./minibank-clients/deploy.sh blue
+            cd ~/minibank-clients
+            git pull origin master
+            ./deploy.sh blue
 
   deploy-green:
     runs-on: ubuntu-latest
