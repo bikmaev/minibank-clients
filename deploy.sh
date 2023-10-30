@@ -1,5 +1,7 @@
 #!/bin/bash
-cd /minibank-clients
+pwd
+ls
+cd ~/minibank-clients
 git pull origin master
 
 #
