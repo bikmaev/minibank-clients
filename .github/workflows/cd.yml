@@ -3,6 +3,15 @@ on:
   push:
     branches: [ "master" ]
 jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+      - name: Show current working directory
+        run: pwd
+
   deploy-blue:
     runs-on: ubuntu-latest
     needs: build
@@ -15,11 +24,13 @@ jobs:
           username: ${{ secrets.SERVER_USER }}
           key: ${{ secrets.SERVER_SSH_KEY }}
           script: |
+            cd ~/minibank-clients
+            git pull origin master
             ./deploy.sh blue
 
   deploy-green:
     runs-on: ubuntu-latest
-    needs: build
+    needs: deploy-blue
 
     steps:
       - name: Deploy green to server
@@ -29,4 +40,6 @@ jobs:
           username: ${{ secrets.SERVER_USER }}
           key: ${{ secrets.SERVER_SSH_KEY }}
           script: |
-            ./deploy.sh green
+            pwd
+            ls
+            ./minibank-clients/deploy.sh green
