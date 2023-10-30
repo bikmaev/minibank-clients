@@ -9,6 +9,8 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
+      - name: Show current working directory
+        run: pwd
 
   deploy-blue:
     runs-on: ubuntu-latest
@@ -22,6 +24,8 @@ jobs:
           username: ${{ secrets.SERVER_USER }}
           key: ${{ secrets.SERVER_SSH_KEY }}
           script: |
+            pwd
+            ls
             ./deploy.sh blue
 
   deploy-green:
@@ -36,4 +40,6 @@ jobs:
           username: ${{ secrets.SERVER_USER }}
           key: ${{ secrets.SERVER_SSH_KEY }}
           script: |
+            pwd
+            ls
             ./deploy.sh green
