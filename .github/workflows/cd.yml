@@ -26,7 +26,7 @@ jobs:
           script: |
             cd ~/minibank-clients
             git pull origin master
-            ./deploy.sh blue
+            ./deploy.sh blue >>deploy.log
 
   deploy-green:
     runs-on: ubuntu-latest
@@ -42,4 +42,4 @@ jobs:
           script: |
             cd ~/minibank-clients
             git pull origin master
-            ./deploy.sh blue
+            ./deploy.sh blue >>deploy.log
