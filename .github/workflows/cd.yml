@@ -26,11 +26,11 @@ jobs:
           script: |
             pwd
             ls
-            ./deploy.sh blue
+            ./minibank-clients/deploy.sh blue
 
   deploy-green:
     runs-on: ubuntu-latest
-    needs: build
+    needs: deploy-blue
 
     steps:
       - name: Deploy green to server
@@ -42,4 +42,4 @@ jobs:
           script: |
             pwd
             ls
-            ./deploy.sh green
+            ./minibank-clients/deploy.sh green
