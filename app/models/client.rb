@@ -3,10 +3,10 @@
 # Client - класс модели клеинта  (клиент банка)
 class Client < ApplicationRecord
   validates :full_name, presence: true
-  # validates :login, presence: true, uniqueness: true, on: :create
-  # validates :email, presence: true, uniqueness: true, on: :create
-  validates :login, presence: true, on: :create
-  validates :email, presence: true, on: :create
+  validates :login, presence: true, uniqueness: true, on: :create
+  validates :email, presence: true, uniqueness: true, on: :create
+  # validates :login, presence: true, on: :create
+  # validates :email, presence: true, on: :create
   validates :password, presence: true, length: { minimum: 6 }
   validates :login, presence: true, on: :update
   validates :email, presence: true, on: :update
