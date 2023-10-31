@@ -4,3 +4,4 @@ class AddUniqueIndexToClients < ActiveRecord::Migration[7.1]
     add_index :clients, :email, unique: true
   end
 end
+
