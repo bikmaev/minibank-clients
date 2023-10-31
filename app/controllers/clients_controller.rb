@@ -15,18 +15,60 @@ class ClientsController < ApplicationController
     render json: @client
   end
 
+  # POST /search
+  def search
+    search_params = client_search_params.except(:password)
+    #Rails.logger.info("параметры поиска1 : #{params}")
+    Rails.logger.info("параметры поиска2 : #{search_params}")
+    #@clients = Client.where(search_params)
+    #@clients = Client.where("full_name LIKE ? AND login LIKE ? AND email LIKE ?", "%#{search_params[:full_name]}%", "%#{search_params[:login]}%", "%#{search_params[:email]}%")
+    conditions = []
+    values = []
+
+    if search_params[:full_name].present?
+      conditions << "full_name = ?"
+      values << search_params[:full_name]
+    end
+
+    if search_params[:login].present?
+      conditions << "login LIKE ?"
+      values << "%#{search_params[:login]}%"
+    end
+
+    if search_params[:email].present?
+      conditions << "email LIKE ?"
+      values << "%#{search_params[:email]}%"
+    end
+
+    query = conditions.join(" AND ")
+    @clients = Client.where(query, *values)
+    #Rails.logger.info("поиск where: #{@clients.inspect}")
+    #@clients.select { |client| client.authenticate(params[:password]) }
+    #Rails.logger.info("отфильтровано по authenticate : #{@clients.inspect}")
+    render json: @clients
+  end
+
+  def login_check
+    if params[:login].present?
+      @client = Client.find_by_login(params[:login])
+      if @client&.authenticate(params[:password])
+        render json: @client, status: :ok
+      else
+        render json: {message: 'Клиент не найден.' }, status: :not_found
+      end
+    else
+      # Обработка случая, когда параметр login отсутствует или пуст
+      render json: { message: 'Ошибка в логине.' }, status: :not_found
+    end
+  end
+
   # POST /clients
   def create
-    # Rails.logger.info("Клиент парамс для сохранения: #{client_params}")
-    # Rails.logger.info("пароль для сохранения: #{params[:password]}")
     @client = Client.new(client_params)
-    # Rails.logger.info("создан объект клиент: #{@client.inspect}")
     @client.password = params[:password] if params[:password].present?
-    # Rails.logger.info("Клиент для сохранения: #{@client.inspect}")
     if @client.save
       render json: @client, status: :created, location: @client
     else
-      # Rails.logger.error("Клиент после сохранения: #{@client.inspect}")
       render json: { error: @client.errors.full_messages.join(', ') }, status: :unprocessable_entity
     end
   end
@@ -56,9 +98,15 @@ class ClientsController < ApplicationController
     params.require(:client).permit(:full_name, :login, :email, :password)
   end
 
+  def client_search_params
+    #params.permit(:full_name, :login, :email, :password)
+    Rails.logger.info("client_search_params : #{params}")
+    search_params = params.slice(:full_name, :login, :email, :password).compact
+    #search_params = { login: params[:login].presence, email: params[:email].presence, full_name: params[:full_name].presence }
+    search_params
+  end
+
   def unique_attributes?(params)
-    # Rails.logger.info("параметры проверки уникальности : #{params}")
-    # Rails.logger.info("параметры проверки уникальности : #{@client.inspect}")
     login_unique = if params[:login].present? && params[:login] != @client.login
                      Client.where.not(id: @client.id).where(login: params[:login]).empty?
                    else
