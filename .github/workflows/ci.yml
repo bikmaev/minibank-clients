@@ -45,4 +45,4 @@ jobs:
           bundler-cache: true
       # Add or replace any other lints here
       - name: Lint Ruby files
-        run: bundle exec rubocop
+        run: bundle exec rubocop -A
